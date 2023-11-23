@@ -89,11 +89,11 @@ public class ContactsController : ControllerBase
     [HttpPut("")]
     [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(int), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> EditContactAsync([FromForm] EditContactDto contactDto, CancellationToken cancellationToken)
+    public async Task<IActionResult> EditContactAsync([FromBody] EditContactDto contactDto, CancellationToken cancellationToken)
     {
         var contact = _mapper.Map<EditContactDto, Contact>(contactDto);
         _logger.LogWarning(contact.ToString());
         return await _contactsBookService.EditAsync(contact, cancellationToken)
-            ? Ok(contact.Id) : StatusCode(500);
+            ? Ok($"contact with id: {contact.Id} succesfully changed!") : StatusCode(500);
     }
 }
