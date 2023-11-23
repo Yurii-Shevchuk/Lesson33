@@ -1,0 +1,53 @@
+﻿@inject HttpClient HttpClient
+
+@{
+  ViewData["Title"] = "All Contacts";
+}
+
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="d-flex flex-column">
+        @{
+          var allContacts = await HttpClient.GetFromJsonAsync<List<Lesson_33_MVC.DTO.GetContactDto>>("/api/contacts");
+          if (allContacts?.Count == 0)
+          {
+            <h1 class="text-center">You have no contacts yet :(</h1>
+          }
+          else
+          {
+            <h1 class="text-center">All Contacts</h1>
+
+            foreach (var contact in allContacts)
+            {
+              <div class="card mb-3">
+                <div class="row g-0">
+                  <div class="col-md-2">
+                    <img src=@($"/api/contacts/{contact.Id}/avatar") width="120" height="120" class="img-fluid m-2" alt="Contact Avatar">
+                  </div>
+                  <div class="col-md-8 justify-content-center">
+                    <div class="card-body">
+                      <h5 class="card-title">@($"{contact.FirstName} {contact.LastName}")</h5>
+                      <p class="card-text">@($"Phone: {contact.Phone}")</p>
+                      <p class="card-text">@($"Address: {contact.Address}")</p>
+                    </div>
+                  </div>
+                  <div class="col-md-2 d-flex justify-content-end align-self-center pe-4">
+                    <a href="/Home/Edit?id=@(contact.Id)" class="btn btn-primary me-2 d-flex flex-row" role="button">
+                      <img src="/images/icon-edit.png" class="me-2" />
+                      Edit
+                    </a>
+                    <a href=@($"/api/contacts/delete?id={contact.Id}") class="btn btn-danger d-flex flex-row" role="button">
+                      <img src="/images/icon-delete.png" class="me-2" />
+                      Delete
+                    </a>
+                  </div>
+                </div>
+              </div>
+            }
+          }
+        }
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,71 @@
+﻿@model Lesson_33_MVC.DTO.EditContactDto
+
+@inject ILogger<Lesson_33_MVC.Controllers.HomeController> logger
+@inject HttpClient HttpClient
+
+@{
+  ViewData["Title"] = "Edit Contact";
+  logger.LogWarning($"{Context.Request.Query["id"]}");
+  var contact = await HttpClient.GetFromJsonAsync<Lesson_33_MVC.DTO.GetContactDto>($"/api/contacts/{Context.Request.Query["id"]}");
+}
+
+<script>
+  function submitChanges() {
+    const data = new URLSearchParams(
+      new FormData(document.getElementById("edit-form")));
+     fetch(`/api/contacts`, {
+      method: "PUT",
+      headers: {},
+      body: data.toString(),
+    })
+      .then(r => r.text())
+      .then(t => document.getElementById("result-div").innerText = t)
+      .catch(e => document.getElementById("result-div").innerText = e.toString());
+  }
+</script>
+
+<h1 class="text-center">Edit contact</h1>
+<div class="text-center">
+  <div id="result-div">
+  </div>
+  <form action="#" id="edit-form">
+    <div class="form-group">
+      <input asp-for="Id" class="form-control" value=@(contact?.Id) hidden />
+    </div>
+    <div class="form-group">
+      <label asp-for="FirstName">First Name</label>
+      <input asp-for="FirstName" class="form-control" value=@(contact?.FirstName ?? "") />
+      <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+      <label asp-for="LastName">Last Name</label>
+      <input asp-for="LastName" class="form-control" value=@(contact?.LastName ?? "") />
+      <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+      <label asp-for="Phone">Phone</label>
+      <input asp-for="Phone" class="form-control" value=@(contact?.Phone ?? "") />
+      <span asp-validation-for="Phone" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+      <label asp-for="Address">Address</label>
+      <input asp-for="Address" class="form-control" value=@(contact?.Address ?? "") />
+      <span asp-validation-for="Address" class="text-danger"></span>
+    </div>
+
+    <div class="d-flex flex-row gap-2 justify-content-evenly mt-4">
+      <button type="button" class="btn btn-primary" onclick="submitChanges()">
+        <img src="/images/icon-done.png" class="me-2" />
+        Apply Changes
+      </button>
+
+      <button type="reset" class="btn btn-primary d-flex align-items-center">
+        <img src="/images/icon-reset.png" class="me-2" />
+        Reset All
+      </button>
+    </div>
+  </form>
+</div>
